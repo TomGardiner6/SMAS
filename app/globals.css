@@ -1,26 +1,69 @@
 @import "tailwindcss";
 
+/* Palette — exact tokens from docs/smas-site-brief.md §3.1. Do not substitute. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #fbf6ee;
+  --ink: #2e2128;
+  --velvet: #8c2f3f;
+  --houselight: #e4a75c;
+  --sage: #8a9b84;
+  --blush: #efdfd7;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-velvet: var(--velvet);
+  --color-houselight: var(--houselight);
+  --color-sage: var(--sage);
+  --color-blush: var(--blush);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-display: var(--font-fraunces);
+  --font-body: var(--font-newsreader);
+  --font-ui: var(--font-archivo);
+
+  /* Warm shadows only: ink at low opacity, never grey-blue (§3.1) */
+  --shadow-warm: 0 2px 12px rgb(46 33 40 / 0.1);
+  --shadow-warm-lg: 0 8px 32px rgb(46 33 40 / 0.14);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-newsreader);
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+
+/* Fraunces at display sizes: soft and slightly wonky for warmth (§3.2) */
+.display {
+  font-family: var(--font-fraunces);
+  font-weight: 560;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+  font-variation-settings: "SOFT" 75, "WONK" 1;
+}
+
+/* Archivo eyebrows / UI labels: uppercase, wide tracking (§3.2) */
+.eyebrow {
+  font-family: var(--font-archivo);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+/* Subtle paper grain, used on the map placeholder (§5.2) */
+.grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+:focus-visible {
+  outline: 2px solid var(--velvet);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--houselight);
+  color: var(--ink);
 }
