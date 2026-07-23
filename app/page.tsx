@@ -2,6 +2,7 @@ import Stage from "@/components/Stage";
 import ActTwo from "@/components/ActTwo";
 import Reveal from "@/components/Reveal";
 import TicketCard from "@/components/TicketCard";
+import WaitlistForm from "@/components/WaitlistForm";
 
 export default function Home() {
   return (
@@ -123,7 +124,7 @@ export default function Home() {
                   We open in London first. Leave your email and we&rsquo;ll
                   write when the house lights go up.
                 </p>
-                {/* The waitlist form (Supabase) lands here in build step 5. */}
+                <WaitlistForm />
               </div>
             </Reveal>
 
