@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, animate, motion, useReducedMotion } from "framer-motion";
 import type { Map as MapboxMap, Marker } from "mapbox-gl";
+import { AvatarDot, PinSvg, Ripple, PIN_EASE } from "./pins";
 
 // Demo cast, near Soho Square (§4 Act I): she drops a pin; a woman two
 // streets away answers and walks over.
@@ -11,7 +12,6 @@ const PIN: [number, number] = [-0.1316, 51.515];
 const AVATAR_START: [number, number] = [-0.1361, 51.5124];
 const AVATAR_END: [number, number] = [-0.1301, 51.5143];
 
-const EASE = [0.22, 1, 0.36, 1] as const;
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 /**
@@ -80,7 +80,7 @@ export default function HeroPinDemo({ map }: { map: MapboxMap }) {
         setAvatarShown(true);
         walk = animate(0, 1, {
           duration: 1.9,
-          ease: EASE,
+          ease: PIN_EASE,
           onUpdate: (t) =>
             avatarMarker.current?.setLngLat([
               AVATAR_START[0] + (AVATAR_END[0] - AVATAR_START[0]) * t,
@@ -115,106 +115,39 @@ export default function HeroPinDemo({ map }: { map: MapboxMap }) {
   return (
     <>
       {createPortal(
-        <PinVisual
-          shown={pinShown || !!reduced}
-          rippling={rippling}
-          saved={saved || !!reduced}
-        />,
+        <div className="relative">
+          {rippling && <Ripple />}
+          <AnimatePresence>
+            {(pinShown || reduced) && (
+              <PinSvg key="pin" drop={!reduced} glow={saved || !!reduced} />
+            )}
+          </AnimatePresence>
+        </div>,
         els.pin
       )}
       {createPortal(
-        <AvatarVisual shown={avatarShown || !!reduced} bubble={bubbleShown || !!reduced} />,
+        <div className="relative">
+          <AnimatePresence>
+            {(avatarShown || reduced) && <AvatarDot key="dot" pop={!reduced} />}
+          </AnimatePresence>
+          <AnimatePresence>
+            {(bubbleShown || reduced) && (
+              <div key="bubble" className="absolute bottom-[28px] left-1/2 -translate-x-1/2">
+                <motion.div
+                  className="w-max rounded-full bg-paper px-3.5 py-1.5 font-ui text-xs font-semibold tracking-wide text-ink shadow-warm-lg"
+                  initial={reduced ? false : { scale: 0.6, opacity: 0, y: 6 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, transition: { duration: 0.5 } }}
+                  transition={{ type: "spring", stiffness: 380, damping: 22 }}
+                >
+                  On my way! 🚶‍♀️ 4 min
+                </motion.div>
+              </div>
+            )}
+          </AnimatePresence>
+        </div>,
         els.avatar
       )}
     </>
-  );
-}
-
-function PinVisual({
-  shown,
-  rippling,
-  saved,
-}: {
-  shown: boolean;
-  rippling: boolean;
-  saved: boolean;
-}) {
-  return (
-    <div className="relative">
-      {rippling && (
-        <div className="absolute left-1/2 top-full h-10 w-10 -translate-x-1/2 -translate-y-1/2">
-          <motion.div
-            className="h-full w-full rounded-full border-2 border-velvet"
-            initial={{ scale: 0.3, opacity: 0.55 }}
-            animate={{ scale: 3.2, opacity: 0 }}
-            transition={{ duration: 1.3, ease: "easeOut" }}
-          />
-        </div>
-      )}
-      <AnimatePresence>
-        {shown && (
-          <motion.svg
-            key="pin"
-            width="34"
-            height="46"
-            viewBox="0 0 36 48"
-            initial={{ y: -140, opacity: 0 }}
-            animate={{
-              y: 0,
-              opacity: 1,
-              transition: { type: "spring", stiffness: 320, damping: 19, mass: 1.1 },
-            }}
-            exit={{ opacity: 0, transition: { duration: 0.6 } }}
-            style={{
-              display: "block",
-              filter: saved
-                ? "drop-shadow(0 0 10px rgba(228, 167, 92, 0.85))"
-                : "drop-shadow(0 2px 4px rgba(46, 33, 40, 0.35))",
-              transition: "filter 0.9s ease",
-            }}
-          >
-            <path
-              d="M18 1.5 C9 1.5 2 8.4 2 17.2 C2 28.5 18 46.5 18 46.5 C18 46.5 34 28.5 34 17.2 C34 8.4 27 1.5 18 1.5 Z"
-              fill="var(--velvet)"
-            />
-            <circle cx="18" cy="17" r="5" fill="var(--paper)" opacity="0.9" />
-          </motion.svg>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-function AvatarVisual({ shown, bubble }: { shown: boolean; bubble: boolean }) {
-  return (
-    <div className="relative">
-      <AnimatePresence>
-        {shown && (
-          <motion.div
-            key="dot"
-            className="h-[18px] w-[18px] rounded-full bg-houselight shadow-warm ring-2 ring-paper"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.6 } }}
-            transition={{ type: "spring", stiffness: 400, damping: 24 }}
-          />
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {bubble && (
-          <div className="absolute bottom-[28px] left-1/2 -translate-x-1/2">
-            <motion.div
-              className="w-max rounded-full bg-paper px-3.5 py-1.5 font-ui text-xs font-semibold tracking-wide text-ink shadow-warm-lg"
-              initial={{ scale: 0.6, opacity: 0, y: 6 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ opacity: 0, transition: { duration: 0.5 } }}
-              transition={{ type: "spring", stiffness: 380, damping: 22 }}
-            >
-              On my way! 🚶‍♀️ 4 min
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-    </div>
   );
 }

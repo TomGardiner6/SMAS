@@ -1,9 +1,17 @@
-import MapBackdrop from "@/components/MapBackdrop";
+import Stage from "@/components/Stage";
+import ActTwo from "@/components/ActTwo";
+import Reveal from "@/components/Reveal";
+import TicketCard from "@/components/TicketCard";
 
 export default function Home() {
   return (
-    <>
-      <MapBackdrop />
+    <Stage>
+      <a
+        href="#waitlist"
+        className="sr-only z-20 rounded-full bg-paper px-4 py-2 font-ui text-sm text-velvet focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+      >
+        Skip to the waitlist
+      </a>
       <main className="relative z-10">
         {/* Act I — the pin drop (§4). Copy on the left third over a soft
             paper scrim; the shared map glides beneath every act. */}
@@ -32,103 +40,114 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Act II — how it works. Map glides east to Covent Garden. */}
+        {/* Act II — how it works. Map glides east to Covent Garden; each
+            step syncs a map event; tap-through on mobile. */}
         <section data-act="how" className="relative">
           <div className="mx-auto max-w-6xl px-6 py-32 md:px-10">
-            <div className="max-w-md">
-              <div className="rounded-2xl bg-paper/95 p-8 shadow-warm-lg md:p-10">
-                <p className="eyebrow text-velvet">Act II — How it works</p>
-                <h2 className="display mt-4 text-4xl md:text-5xl">
-                  Drop a pin. Company comes to you.
-                </h2>
-              </div>
-
-              <ol className="mt-8 space-y-8">
-                <li className="rounded-2xl bg-paper/95 p-8 shadow-warm">
-                  <h3 className="display text-2xl">1. Drop a pin</h3>
-                  <p className="mt-3">
-                    Public places only. Pick your vibe: chatty, low-key company,
-                    or a spare ticket going begging.
-                  </p>
-                </li>
-                <li className="rounded-2xl bg-paper/95 p-8 shadow-warm">
-                  <h3 className="display text-2xl">2. Someone says “on my way”</h3>
-                  <p className="mt-3">
-                    Verified women nearby see your pin. You choose who takes the
-                    seat.
-                  </p>
-                </li>
-                <li className="rounded-2xl bg-paper/95 p-8 shadow-warm">
-                  <h3 className="display text-2xl">3. Company, on your terms</h3>
-                  <p className="mt-3">
-                    Chat in the app, meet in the open, and the pin closes when
-                    you&rsquo;re happy.
-                  </p>
-                </li>
-              </ol>
-            </div>
+            <ActTwo />
           </div>
         </section>
 
         {/* Act III — safety, the emotional core. South Bank at dusk. */}
         <section data-act="safety" className="relative">
           <div className="mx-auto max-w-6xl px-6 py-40 md:px-10">
-            <div className="max-w-xl rounded-2xl bg-paper/95 p-8 shadow-warm-lg md:p-12">
-              <p className="eyebrow text-velvet">Act III — The safety layer</p>
-              <h2 className="display mt-4 text-4xl md:text-6xl">
-                Built so your gut can relax.
-              </h2>
-              <ul className="mt-8 space-y-5 text-lg">
-                <li>Every member is ID-verified before her first pin.</li>
-                <li>Pins live in public places only.</li>
-                <li>
-                  One tap alerts the contacts you chose, or rings your phone
-                  with a very convincing fake call.
-                </li>
-                <li>A gentle check-in nudge, halfway through your meetup.</li>
-              </ul>
-              <p className="mt-8 text-ink/80">
-                Afterwards, ratings are private and positive-only. Kindness gets
-                a small medal, never a public score.
-              </p>
-              <p className="mt-4 font-ui text-sm font-semibold uppercase tracking-[0.08em] text-velvet">
-                Women-only · London-first
-              </p>
-            </div>
+            <Reveal className="max-w-xl">
+              <div className="rounded-2xl bg-paper/95 p-8 shadow-warm-lg md:p-12">
+                <p className="eyebrow text-velvet">Act III — The safety layer</p>
+                <h2 className="display mt-4 text-4xl md:text-6xl">
+                  Built so your gut can relax.
+                </h2>
+                <ul className="mt-10 space-y-6 text-lg">
+                  {[
+                    "Every member is ID-verified before her first pin.",
+                    "Pins live in public places only.",
+                    "One tap alerts the contacts you chose, or rings your phone with a very convincing fake call.",
+                    "A gentle check-in nudge, halfway through your meetup.",
+                  ].map((fact, i) => (
+                    <Reveal key={fact} delay={i * 0.12}>
+                      <li className="flex gap-4">
+                        <span
+                          aria-hidden
+                          className="mt-2.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-sage"
+                        />
+                        {fact}
+                      </li>
+                    </Reveal>
+                  ))}
+                </ul>
+                <Reveal delay={0.5}>
+                  <p className="mt-10 text-ink/80">
+                    Afterwards, ratings are private and positive-only. Kindness
+                    gets a small medal, never a public score.
+                  </p>
+                  <p className="mt-5 font-ui text-sm font-semibold uppercase tracking-[0.08em] text-velvet">
+                    Women-only · London-first
+                  </p>
+                </Reveal>
+              </div>
+            </Reveal>
           </div>
         </section>
 
         {/* Act IV — the interval bar: spare tickets. Royal Albert Hall. */}
         <section data-act="interval" className="relative">
           <div className="mx-auto max-w-6xl px-6 py-32 md:px-10">
-            <div className="ml-auto max-w-md rounded-2xl bg-paper/95 p-8 shadow-warm-lg md:p-10">
-              <p className="eyebrow text-velvet">Act IV — The interval bar</p>
-              <h2 className="display mt-4 text-4xl md:text-5xl">
-                Her plus-one cancelled. Your favourite band. Everyone wins.
-              </h2>
-              <p className="mt-5">
-                A spare ticket is a velvet pin: drop it, and the seat beside you
-                goes to someone who actually wanted to be there.
-              </p>
-            </div>
+            <Reveal className="ml-auto max-w-md">
+              <div className="rounded-2xl bg-paper/95 p-8 shadow-warm-lg md:p-10">
+                <p className="eyebrow text-velvet">Act IV — The interval bar</p>
+                <h2 className="display mt-4 text-4xl md:text-5xl">
+                  Her plus-one cancelled. Your favourite band. Everyone wins.
+                </h2>
+                <p className="mt-5">
+                  A spare ticket is a velvet pin: drop it, and the seat beside
+                  you goes to someone who actually wanted to be there.
+                </p>
+                <TicketCard />
+              </div>
+            </Reveal>
           </div>
         </section>
 
         {/* Act V — the waitlist. Wide London, dim pins glowing on. */}
-        <section data-act="waitlist" id="waitlist" className="relative flex min-h-svh items-center">
+        <section
+          data-act="waitlist"
+          id="waitlist"
+          className="relative flex min-h-svh items-center"
+        >
           <div className="mx-auto w-full max-w-6xl px-6 py-32 md:px-10">
-            <div className="mx-auto max-w-lg rounded-2xl bg-paper p-8 text-center shadow-warm-lg md:p-12">
-              <p className="eyebrow text-velvet">Act V — Take your seat</p>
-              <h2 className="display mt-4 text-5xl md:text-6xl">Save your seat.</h2>
-              <p className="mt-5">
-                We open in London first. Leave your email and we&rsquo;ll write
-                when the house lights go up.
-              </p>
-              {/* The waitlist form (Supabase) lands here in build step 5. */}
-            </div>
+            <Reveal className="mx-auto max-w-lg">
+              <div className="rounded-2xl bg-paper p-8 text-center shadow-warm-lg md:p-12">
+                <p className="eyebrow text-velvet">Act V — Take your seat</p>
+                <h2 className="display mt-4 text-5xl md:text-6xl">Save your seat.</h2>
+                <p className="mt-5">
+                  We open in London first. Leave your email and we&rsquo;ll
+                  write when the house lights go up.
+                </p>
+                {/* The waitlist form (Supabase) lands here in build step 5. */}
+              </div>
+            </Reveal>
+
+            <footer className="mt-16 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-ui text-xs text-ink/60">
+              <span>© 2026 Save Me A Seat</span>
+              <a href="mailto:hello@savemeaseat.london" className="transition-colors hover:text-velvet">
+                hello@savemeaseat.london
+              </a>
+              <a href="/privacy" className="transition-colors hover:text-velvet">
+                Privacy
+              </a>
+              <span className="inline-flex items-center gap-1.5">
+                Made in London
+                <svg width="9" height="12" viewBox="0 0 36 48" aria-hidden>
+                  <path
+                    d="M18 1.5 C9 1.5 2 8.4 2 17.2 C2 28.5 18 46.5 18 46.5 C18 46.5 34 28.5 34 17.2 C34 8.4 27 1.5 18 1.5 Z"
+                    fill="var(--velvet)"
+                  />
+                </svg>
+              </span>
+            </footer>
           </div>
         </section>
       </main>
-    </>
+    </Stage>
   );
 }
