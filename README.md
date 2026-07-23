@@ -43,6 +43,15 @@ grey box.
    Variables.
 3. Every push to `main` deploys automatically.
 
+> **Set the env vars before you build, and redeploy after adding them.**
+> `NEXT_PUBLIC_*` variables are inlined into the client bundle at **build
+> time**, not read at runtime. If you add or change them on an
+> already-built deployment, nothing happens until you trigger a fresh
+> deploy (Deployments → ⋯ → Redeploy). A deployment built without the
+> Mapbox token falls back to the static map image (no pin-drop), and one
+> built without the Supabase keys shows the "that didn't save" error on
+> every signup — both silently, with no console error.
+
 ## Design decisions & deviations
 
 - **Map restyle at runtime** (brief §5.1): `lib/map-theatre.ts` repaints

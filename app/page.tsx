@@ -130,8 +130,8 @@ export default function Home() {
 
             <footer className="mt-16 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-ui text-xs text-ink/70">
               <span>© 2026 Save Me A Seat</span>
-              <a href="mailto:hello@savemeaseat.london" className="transition-colors hover:text-velvet">
-                hello@savemeaseat.london
+              <a href="mailto:mayasexton1@gmail.com" className="transition-colors hover:text-velvet">
+                mayasexton1@gmail.com
               </a>
               <a href="/privacy" className="transition-colors hover:text-velvet">
                 Privacy

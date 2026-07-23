@@ -25,10 +25,10 @@ export default function Privacy() {
         <p>
           Want off the list? Email{" "}
           <a
-            href="mailto:hello@savemeaseat.london"
+            href="mailto:mayasexton1@gmail.com"
             className="text-velvet underline underline-offset-2"
           >
-            hello@savemeaseat.london
+            mayasexton1@gmail.com
           </a>{" "}
           and we&rsquo;ll delete you promptly, no questions.
         </p>

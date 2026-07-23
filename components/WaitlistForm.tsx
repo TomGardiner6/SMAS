@@ -65,7 +65,7 @@ export default function WaitlistForm() {
     } catch {
       setStatus("idle");
       setError(
-        "That didn’t save — it’s us, not you. Try again in a minute, or email hello@savemeaseat.london and we’ll add you by hand."
+        "That didn’t save — it’s us, not you. Try again in a minute, or email mayasexton1@gmail.com and we’ll add you by hand."
       );
     }
   }
