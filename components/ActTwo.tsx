@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, animate, motion, useReducedMotion } from "framer-motion";
 import type { Map as MapboxMap, Marker } from "mapbox-gl";
 import { useStage } from "./Stage";
-import { AvatarDot, PinSvg, Ripple, PIN_EASE } from "./pins";
+import { AvatarDot, PinSvg, PIN_EASE } from "./pins";
 import Reveal from "./Reveal";
 
 // The three vibes, staged around Covent Garden (§4 Act II).
@@ -123,13 +123,13 @@ export default function ActTwo() {
           </div>
         </div>
       ) : (
-        <ol className="mt-8 max-w-md space-y-8">
+        <ol className="mt-8 max-w-md list-none space-y-8">
           {STEPS.map((s, i) => (
-            <Reveal key={s.title} delay={i * 0.08}>
-              <li data-step={i} className="list-none rounded-2xl bg-paper/95 p-8 shadow-warm">
+            <li key={s.title} data-step={i}>
+              <Reveal delay={i * 0.08} className="rounded-2xl bg-paper/95 p-8 shadow-warm">
                 <StepBody i={i} />
-              </li>
-            </Reveal>
+              </Reveal>
+            </li>
           ))}
         </ol>
       )}
@@ -247,7 +247,8 @@ function CoventScene({ map, step }: { map: MapboxMap; step: number }) {
                 </motion.div>
               )}
             </AnimatePresence>
-            {step >= 1 && i === 2 && <Ripple color="var(--velvet)" />}
+            {/* Chanel rule: no second ripple — that flourish belongs to the
+                hero pin alone (§3.3) */}
             <PinSvg
               color={VIBE_PINS[i].color}
               size={30}

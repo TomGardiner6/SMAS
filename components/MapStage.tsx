@@ -36,6 +36,21 @@ export default function MapStage({
     let cancelled = false;
 
     (async () => {
+      // let the page paint and fonts land before mapbox's chunk competes
+      // for bandwidth and main thread — the blush placeholder is the
+      // designed loading state (§5.2)
+      await new Promise<void>((resolve) => {
+        if (document.readyState === "complete") resolve();
+        else window.addEventListener("load", () => resolve(), { once: true });
+      });
+      await new Promise<void>((resolve) => {
+        if ("requestIdleCallback" in window) {
+          window.requestIdleCallback(() => resolve(), { timeout: 1500 });
+        } else {
+          setTimeout(resolve, 500);
+        }
+      });
+      if (cancelled) return;
       const mapboxgl = (await import("mapbox-gl")).default;
       if (cancelled || !containerRef.current) return;
       mapboxgl.accessToken = token;
@@ -108,7 +123,7 @@ export default function MapStage({
             priority
             className="object-cover"
           />
-          <p className="absolute bottom-1 right-2 font-ui text-[10px] text-ink/50">
+          <p className="absolute bottom-1 right-2 font-ui text-[10px] text-ink/65">
             © Mapbox © OpenStreetMap
           </p>
         </>

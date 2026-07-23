@@ -11,7 +11,6 @@ const fraunces = Fraunces({
 
 const newsreader = Newsreader({
   subsets: ["latin"],
-  style: ["normal", "italic"],
   variable: "--font-newsreader",
   display: "swap",
 });
@@ -26,6 +25,20 @@ export const metadata: Metadata = {
   title: "Save Me A Seat — London",
   description:
     "Stood up? Spare ticket? Drop a pin and a verified woman nearby will take that seat. Women-only, London-first. Join the waitlist.",
+  openGraph: {
+    title: "Save Me A Seat — London",
+    description:
+      "Company at short notice, for women in London. Drop a pin; someone nearby takes the seat.",
+    images: [{ url: "/og.png", width: 1200, height: 630 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Save Me A Seat — London",
+    description:
+      "Company at short notice, for women in London. Drop a pin; someone nearby takes the seat.",
+    images: ["/og.png"],
+  },
 };
 
 export default function RootLayout({

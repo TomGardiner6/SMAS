@@ -23,7 +23,7 @@ export default function TicketCard() {
           Spare ticket · Tonight
         </p>
         <p className="display mt-2 text-2xl">Royal Albert Hall</p>
-        <p className="mt-1 font-ui text-xs uppercase tracking-wide text-ink/60">
+        <p className="mt-1 font-ui text-xs uppercase tracking-wide text-ink/70">
           Door 6 · Stalls K · 7.30pm
         </p>
         <p className="mt-4 inline-flex items-center gap-2 font-ui text-xs font-semibold uppercase tracking-wide text-ink/80">
@@ -37,7 +37,7 @@ export default function TicketCard() {
         </p>
       </div>
       <div className="flex w-[88px] items-center justify-center border-l-2 border-dashed border-ink/25 p-3">
-        <p className="rotate-180 font-ui text-[10px] font-semibold uppercase tracking-[0.2em] text-ink/50 [writing-mode:vertical-rl]">
+        <p className="rotate-180 font-ui text-[10px] font-semibold uppercase tracking-[0.2em] text-ink/65 [writing-mode:vertical-rl]">
           Admit one
         </p>
       </div>

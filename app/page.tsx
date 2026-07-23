@@ -65,15 +65,15 @@ export default function Home() {
                     "One tap alerts the contacts you chose, or rings your phone with a very convincing fake call.",
                     "A gentle check-in nudge, halfway through your meetup.",
                   ].map((fact, i) => (
-                    <Reveal key={fact} delay={i * 0.12}>
-                      <li className="flex gap-4">
+                    <li key={fact}>
+                      <Reveal delay={i * 0.12} className="flex gap-4">
                         <span
                           aria-hidden
                           className="mt-2.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-sage"
                         />
                         {fact}
-                      </li>
-                    </Reveal>
+                      </Reveal>
+                    </li>
                   ))}
                 </ul>
                 <Reveal delay={0.5}>
@@ -128,7 +128,7 @@ export default function Home() {
               </div>
             </Reveal>
 
-            <footer className="mt-16 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-ui text-xs text-ink/60">
+            <footer className="mt-16 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-ui text-xs text-ink/70">
               <span>© 2026 Save Me A Seat</span>
               <a href="mailto:hello@savemeaseat.london" className="transition-colors hover:text-velvet">
                 hello@savemeaseat.london
