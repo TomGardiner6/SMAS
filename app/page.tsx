@@ -1,14 +1,16 @@
+import HeroMap from "@/components/HeroMap";
+
 export default function Home() {
   return (
     <main>
-      {/* Act I — the pin drop. The live Mapbox scene replaces this placeholder
-          in the next milestone (§5); until then, the blush stand-in it will
-          fade in over. */}
+      {/* Act I — the pin drop (§4). Live map behind, copy on the left third
+          over a soft paper scrim so text stays readable (§9). */}
       <section className="relative flex min-h-svh items-center overflow-hidden">
-        <div aria-hidden className="absolute inset-0 bg-blush">
-          <div className="grain absolute inset-0 opacity-[0.05] mix-blend-multiply" />
-          <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-paper via-paper/60 to-transparent md:w-2/3" />
-        </div>
+        <HeroMap />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 w-full bg-gradient-to-r from-paper via-paper/60 to-transparent md:w-2/3"
+        />
 
         <div className="relative mx-auto w-full max-w-6xl px-6 md:px-10">
           <div className="max-w-2xl py-24">
