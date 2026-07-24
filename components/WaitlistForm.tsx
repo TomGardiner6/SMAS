@@ -76,7 +76,8 @@ export default function WaitlistForm() {
         <PinSvg size={30} drop={!reduced} glow />
         <p className="display text-2xl">Seat saved.</p>
         <p className="text-ink/80">
-          We&rsquo;ll write when the house lights go up in London.
+          You&rsquo;re on the list — we&rsquo;ll write the moment we open in
+          London.
         </p>
       </div>
     );

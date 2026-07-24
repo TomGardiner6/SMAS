@@ -121,8 +121,8 @@ export default function Home() {
                 <p className="eyebrow text-velvet">Act V — Take your seat</p>
                 <h2 className="display mt-4 text-5xl md:text-6xl">Save your seat.</h2>
                 <p className="mt-5">
-                  We open in London first. Leave your email and we&rsquo;ll
-                  write when the house lights go up.
+                  We&rsquo;re opening in London first. Leave your details and
+                  you&rsquo;ll be first through the doors.
                 </p>
                 <WaitlistForm />
               </div>
@@ -136,15 +136,6 @@ export default function Home() {
               <a href="/privacy" className="transition-colors hover:text-velvet">
                 Privacy
               </a>
-              <span className="inline-flex items-center gap-1.5">
-                Made in London
-                <svg width="9" height="12" viewBox="0 0 36 48" aria-hidden>
-                  <path
-                    d="M18 1.5 C9 1.5 2 8.4 2 17.2 C2 28.5 18 46.5 18 46.5 C18 46.5 34 28.5 34 17.2 C34 8.4 27 1.5 18 1.5 Z"
-                    fill="var(--velvet)"
-                  />
-                </svg>
-              </span>
             </footer>
           </div>
         </section>
