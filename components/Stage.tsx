@@ -25,9 +25,16 @@ const ACT_WAYPOINTS: Record<Act, { center: [number, number]; zoom: number; pitch
   waitlist: WAYPOINTS.wideLondon,
 };
 
-const StageContext = createContext<{ map: MapboxMap | null; act: Act }>({
+const StageContext = createContext<{
+  map: MapboxMap | null;
+  act: Act;
+  userPinActive: boolean;
+  setUserPinActive: (v: boolean) => void;
+}>({
   map: null,
   act: "hero",
+  userPinActive: false,
+  setUserPinActive: () => {},
 });
 
 export const useStage = () => useContext(StageContext);
@@ -42,6 +49,9 @@ export const useStage = () => useContext(StageContext);
 export default function Stage({ children }: { children: ReactNode }) {
   const [map, setMap] = useState<MapboxMap | null>(null);
   const [act, setAct] = useState<Act>("hero");
+  // once the visitor drops her own pin (TryPinDemo), the scripted hero
+  // loop stands down for good — two casts on one stage would collide
+  const [userPinActive, setUserPinActive] = useState(false);
   const actRef = useRef(act);
 
   useEffect(() => {
@@ -85,12 +95,12 @@ export default function Stage({ children }: { children: ReactNode }) {
   }, [map]);
 
   return (
-    <StageContext.Provider value={{ map, act }}>
+    <StageContext.Provider value={{ map, act, userPinActive, setUserPinActive }}>
       <div className="fixed inset-0 z-0" aria-hidden="true">
         <MapStage className="absolute inset-0" onReady={setMap} />
         {/* per-act scenes mount only while their act plays, so markers never
             photobomb the next scene; each replays on scrolling back */}
-        {map && act === "hero" ? <HeroPinDemo map={map} /> : null}
+        {map && act === "hero" && !userPinActive ? <HeroPinDemo map={map} /> : null}
         {map && act === "waitlist" ? <WaitlistPins map={map} /> : null}
         {/* Act III settles on the South Bank at dusk: a warm tint, not a style swap (§4) */}
         <motion.div

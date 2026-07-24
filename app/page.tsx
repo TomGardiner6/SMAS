@@ -2,6 +2,7 @@ import Stage from "@/components/Stage";
 import ActTwo from "@/components/ActTwo";
 import Reveal from "@/components/Reveal";
 import TicketCard from "@/components/TicketCard";
+import TryPinDemo from "@/components/TryPinDemo";
 import WaitlistForm from "@/components/WaitlistForm";
 
 export default function Home() {
@@ -37,6 +38,7 @@ export default function Home() {
               >
                 Join the waitlist
               </a>
+              <TryPinDemo />
             </div>
           </div>
         </section>

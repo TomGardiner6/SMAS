@@ -67,5 +67,17 @@ grey box.
   (`h-full w-full`) rather than positioned — don't "simplify" it back.
 - **Act II on mobile** is a tap-through card (Next button) driving the
   same map events; scroll is never hijacked (brief §3.4).
+- **The hero "try it" demo** (`TryPinDemo`) merges the reasons showcase
+  with the interactive pin-drop: the chips *are* the menu of use cases,
+  and tapping one drops the pin. No map taps anywhere, so it can't fight
+  page scroll on mobile; the map stays `interactive: false` (§5.2). Once
+  the visitor drops her own pin, the scripted hero loop stands down.
+- **Scene staging is viewport-derived** (`lib/hero-scene.ts`): pin and
+  walk positions are unprojected from screen coordinates, because fixed
+  Soho lng/lat put the whole cast off the right edge on phones. Staging
+  waits for the camera to be idle first.
+- **Waitlist name column**: if the deployed code sends `name` before the
+  column exists in Supabase, the form retries the insert without it
+  (PGRST204), so a schema/deploy ordering mistake can't break signups.
 - **Ticket notches** (Act IV) use `mask-composite`; browsers without it
   show square corners at the tear line, nothing breaks.
