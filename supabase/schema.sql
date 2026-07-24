@@ -16,7 +16,9 @@ alter table public.waitlist_signups add column if not exists name text;
 alter table public.waitlist_signups enable row level security;
 
 -- The site may add a signup; anonymous visitors may never read,
--- change, or delete anything.
+-- change, or delete anything. Postgres has no `create policy if not
+-- exists`, so drop-then-create keeps the whole file re-runnable.
+drop policy if exists "anon can join the waitlist" on public.waitlist_signups;
 create policy "anon can join the waitlist"
   on public.waitlist_signups
   for insert
