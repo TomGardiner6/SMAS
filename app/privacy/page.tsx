@@ -13,9 +13,10 @@ export default function Privacy() {
       <h1 className="display mt-4 text-4xl md:text-5xl">Privacy</h1>
       <div className="mt-8 space-y-5">
         <p>
-          This site collects one thing: the email address you give us for the
-          waitlist, plus a postcode area if you choose to add one. We use it to
-          write to you about Save Me A Seat, and for nothing else.
+          This site collects what you give us for the waitlist: your email
+          address, plus a first name and postcode area if you choose to add
+          them. We use it to write to you about Save Me A Seat, and for
+          nothing else.
         </p>
         <p>
           There are no analytics, no tracking pixels, no cookies beyond what

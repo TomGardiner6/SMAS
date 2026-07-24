@@ -4,9 +4,14 @@
 create table if not exists public.waitlist_signups (
   id uuid primary key default gen_random_uuid(),
   email text not null,
+  name text,
   postcode_area text,
   created_at timestamptz not null default now()
 );
+
+-- `name` arrived after the first deploy; this upgrades an existing table.
+-- The whole file is safe to re-run.
+alter table public.waitlist_signups add column if not exists name text;
 
 alter table public.waitlist_signups enable row level security;
 

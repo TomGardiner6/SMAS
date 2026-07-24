@@ -11,15 +11,16 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const POSTCODE_AREA_RE = /^[A-Za-z]{1,2}\d[A-Za-z\d]?$/;
 
 /**
- * The waitlist (§4 Act V, §6): email + optional postcode area straight into
- * Supabase. Honeypot for bots, button disabled while saving, specific error
- * copy, and a duplicate email still reads as success — we never reveal
- * who's already on the list.
+ * The waitlist (§4 Act V, §6): name (optional) + email + optional postcode
+ * area straight into Supabase. Honeypot for bots, button disabled while
+ * saving, specific error copy, and a duplicate email still reads as success
+ * — we never reveal who's already on the list.
  */
 export default function WaitlistForm() {
   const reduced = useReducedMotion();
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
   async function submit(e: React.FormEvent) {
@@ -29,6 +30,7 @@ export default function WaitlistForm() {
     if (!form) return;
 
     const data = new FormData(form);
+    const name = String(data.get("name") ?? "").trim().slice(0, 80);
     const email = String(data.get("email") ?? "").trim();
     const postcodeArea = String(data.get("postcode_area") ?? "").trim();
     const honeypot = String(data.get("website") ?? "");
@@ -55,12 +57,21 @@ export default function WaitlistForm() {
       const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
       if (!url || !key) throw new Error("missing config");
       const supabase = createClient(url, key);
-      const { error: insertError } = await supabase.from("waitlist_signups").insert({
+      const payload: { email: string; postcode_area: string | null; name?: string } = {
         email,
         postcode_area: postcodeArea || null,
-      });
+      };
+      if (name) payload.name = name;
+      let { error: insertError } = await supabase.from("waitlist_signups").insert(payload);
+      // PGRST204 = the name column isn't in the database yet (schema.sql not
+      // re-run since it was added). Save her anyway, just without the name.
+      if (insertError?.code === "PGRST204" && payload.name) {
+        delete payload.name;
+        ({ error: insertError } = await supabase.from("waitlist_signups").insert(payload));
+      }
       // 23505 = already on the list; that's a success as far as she's concerned
       if (insertError && insertError.code !== "23505") throw insertError;
+      setFirstName(name.split(/\s+/)[0] ?? "");
       setStatus("done");
     } catch {
       setStatus("idle");
@@ -74,7 +85,9 @@ export default function WaitlistForm() {
     return (
       <div role="status" className="mt-8 flex flex-col items-center gap-4">
         <PinSvg size={30} drop={!reduced} glow />
-        <p className="display text-2xl">Seat saved.</p>
+        <p className="display text-2xl">
+          {firstName ? `Seat saved, ${firstName}.` : "Seat saved."}
+        </p>
         <p className="text-ink/80">
           You&rsquo;re on the list — we&rsquo;ll write the moment we open in
           London.
@@ -85,6 +98,24 @@ export default function WaitlistForm() {
 
   return (
     <form ref={formRef} onSubmit={submit} className="mt-8 text-left" noValidate>
+      <label htmlFor="waitlist-name" className="font-ui text-xs font-semibold uppercase tracking-[0.08em] text-ink/70">
+        First name <span className="normal-case tracking-normal text-ink/65">(optional)</span>
+      </label>
+      <div className="relative mb-5 mt-1">
+        <input
+          id="waitlist-name"
+          name="name"
+          type="text"
+          autoComplete="given-name"
+          placeholder="Maya"
+          className="peer w-full border-b border-ink/25 bg-transparent py-2.5 font-body text-lg outline-none placeholder:text-ink/35 focus:outline-none"
+        />
+        <span
+          aria-hidden
+          className="absolute bottom-0 left-0 h-0.5 w-full origin-left scale-x-0 bg-velvet transition-transform duration-300 ease-out peer-focus:scale-x-100"
+        />
+      </div>
+
       <label htmlFor="waitlist-email" className="font-ui text-xs font-semibold uppercase tracking-[0.08em] text-ink/70">
         Email
       </label>
