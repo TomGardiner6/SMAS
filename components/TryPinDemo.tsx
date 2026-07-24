@@ -6,35 +6,42 @@ import { AnimatePresence, animate, motion, useReducedMotion } from "framer-motio
 import type { Map as MapboxMap, Marker } from "mapbox-gl";
 import { useStage } from "./Stage";
 import { AvatarDot, PinSvg, Ripple, PIN_EASE } from "./pins";
-import { cameraIdle, heroScene, type HeroScene } from "@/lib/hero-scene";
+import { cameraIdle, heroScene, pinPoint, placeOffset, type HeroScene } from "@/lib/hero-scene";
+import { REASONS, type Reason } from "@/lib/reasons";
 
-// The reasons chips double as the "what's this for?" showcase — tennis,
-// study, dinner, language — so the breadth of the product is visible in the
-// hero even before anyone taps.
-const REASONS = [
-  { id: "tennis", chip: "A tennis partner", reply: "I’ll bring rackets 🎾 6 min" },
-  { id: "study", chip: "A study buddy", reply: "Laptop’s in my bag 📚 5 min" },
-  { id: "dinner", chip: "A new face for dinner", reply: "Save me a seat 🍷 4 min" },
-  { id: "french", chip: "A native French speaker", reply: "J’arrive ! 🇫🇷 5 min" },
-] as const;
-
-type Reason = (typeof REASONS)[number];
-
-const PHASES = ["drop", "ripple", "walk", "bubble", "saved"] as const;
+const PHASES = ["drop", "ripple", "walk", "bubble", "saved", "settle"] as const;
 type Phase = (typeof PHASES)[number];
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 /**
- * The hero demo you do yourself: pick who you need tonight and your pin
- * drops on the real map — ripple, a woman walks over, and her reply answers
- * the reason you chose. No map taps needed, so it can't fight page scroll
- * on mobile; under reduced motion the scene renders pre-landed.
+ * The hero demo you do yourself: pick who you need tonight and the camera
+ * flies to a real venue for it — Centre Court for tennis, Colbert for
+ * French — where your pin drops, a woman walks over, and her reply answers
+ * the reason you chose. The scene ends with a slow pull-back that reveals
+ * the neighbourhood. No map taps needed, so it can't fight page scroll on
+ * mobile; under reduced motion the camera cuts and the scene pre-lands.
  */
 export default function TryPinDemo() {
-  const { map, setUserPinActive } = useStage();
+  const { map, reason, setReason } = useStage();
   const reduced = useReducedMotion();
-  const [reason, setReason] = useState<Reason | null>(null);
+
+  const fly = (r: Reason) => {
+    if (!map) return;
+    const cam = {
+      center: r.place.center,
+      zoom: r.place.zoom,
+      pitch: 40,
+      // aim the venue at the exact viewport point the pin drops on
+      offset: placeOffset(map),
+    };
+    if (reduced) {
+      map.easeTo({ ...cam, duration: 0 });
+    } else {
+      // unhurried, high arc: rise over London, dive to the venue
+      map.flyTo({ ...cam, speed: 0.95, curve: 1.6, maxDuration: 5500 });
+    }
+  };
 
   return (
     <div className="mt-10 max-w-md">
@@ -50,8 +57,8 @@ export default function TryPinDemo() {
               type="button"
               aria-pressed={selected}
               onClick={() => {
-                setUserPinActive(true);
                 setReason(r);
+                fly(r);
               }}
               className={`rounded-full px-4 py-2 font-ui text-xs font-semibold tracking-wide shadow-warm transition duration-150 active:scale-[0.97] ${
                 selected
@@ -64,32 +71,46 @@ export default function TryPinDemo() {
           );
         })}
       </div>
-      {/* the map layer is aria-hidden, so narrate the scene here instead */}
+      {/* the map layer is aria-hidden, so name the venue and narrate here */}
       {reason && (
-        <p role="status" className="sr-only">
-          Your pin is on the map. A verified woman nearby replies:
-          “{reason.reply}”.
-        </p>
+        <motion.p
+          key={`caption-${reason.id}`}
+          role="status"
+          className="mt-3 font-ui text-xs text-ink/70"
+          initial={reduced ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: PIN_EASE, delay: 0.15 }}
+        >
+          Your pin&rsquo;s at {reason.place.name}.
+          <span className="sr-only">
+            {" "}
+            A verified woman nearby replies: &ldquo;{reason.reply}&rdquo;.
+          </span>
+        </motion.p>
       )}
       {/* Not gated on the active act: the act flips to "how" once you've
           scrolled even half a screen, which made the chips go dead right
-          when they were comfortably reachable. The scene stages itself
-          from the current viewport, so the pin drops wherever the camera
-          is — and flies off-stage naturally when the camera travels on. */}
+          when they were comfortably reachable. The scene waits for the
+          camera to reach its venue before dropping the pin — even if that
+          arrival is a later scroll back up to the hero. */}
       {map && reason ? (
-        <TryScene key={reason.id} map={map} reply={reason.reply} reduced={!!reduced} />
+        <TryScene key={reason.id} map={map} reason={reason} reduced={!!reduced} />
       ) : null}
     </div>
   );
 }
 
-/** One run of the drop → ripple → walk → reply → saved sequence. Keyed by
- * reason, so picking another chip strikes the set and replays fresh. */
-function TryScene({ map, reply, reduced }: { map: MapboxMap; reply: string; reduced: boolean }) {
+/** One run of the fly → drop → ripple → walk → reply → saved → pull-back
+ * sequence. Keyed by reason, so picking another chip strikes the set and
+ * replays fresh at the new venue. */
+function TryScene({ map, reason, reduced }: { map: MapboxMap; reason: Reason; reduced: boolean }) {
+  const { act } = useStage();
   const [els, setEls] = useState<{ pin: HTMLDivElement; avatar: HTMLDivElement } | null>(null);
   const avatarMarker = useRef<Marker | null>(null);
   const scene = useRef<HeroScene | null>(null);
   const [phase, setPhase] = useState<Phase>("drop");
+  const actNow = useRef(act);
+  actNow.current = act;
   // visuals derive from `reduced` at render — no setState needed to pre-land
   const shown: Phase = reduced ? "saved" : phase;
   const at = (p: Phase) => PHASES.indexOf(shown) >= PHASES.indexOf(p);
@@ -97,9 +118,25 @@ function TryScene({ map, reply, reduced }: { map: MapboxMap; reply: string; redu
   useEffect(() => {
     let cancelled = false;
     let markers: Marker[] = [];
+    let moveHandler: (() => void) | undefined;
     (async () => {
       const mapboxgl = (await import("mapbox-gl")).default;
+      const venue = mapboxgl.LngLat.convert(reason.place.center);
+      // the pin belongs at the venue: hold the curtain until the flight
+      // lands (or, if scrolling interrupted it, until the hero's next
+      // return trip brings the camera back to this framing)
+      const arrived = () => {
+        const { clientWidth: w, clientHeight: h } = map.getContainer();
+        return map.unproject(pinPoint(w, h)).distanceTo(venue) < 250;
+      };
       await cameraIdle(map);
+      while (!cancelled && !arrived()) {
+        await new Promise<void>((r) => {
+          moveHandler = () => r();
+          map.once("moveend", moveHandler);
+        });
+        moveHandler = undefined;
+      }
       if (cancelled) return;
       const s = heroScene(map);
       scene.current = s;
@@ -117,9 +154,10 @@ function TryScene({ map, reply, reduced }: { map: MapboxMap; reply: string; redu
     })();
     return () => {
       cancelled = true;
+      if (moveHandler) map.off("moveend", moveHandler);
       markers.forEach((m) => m.remove());
     };
-  }, [map]);
+  }, [map, reason]);
 
   useEffect(() => {
     if (!els) return;
@@ -161,13 +199,26 @@ function TryScene({ map, reply, reduced }: { map: MapboxMap; reply: string; redu
       await sleep(800);
       if (cancelled) return;
       setPhase("saved");
+      // Curtain call: once the reply has been read, the bubble bows out and
+      // the camera pulls back around the pin — same screen spot, wider
+      // neighbourhood — so the scene ends on "your seat, saved, at a real
+      // place". Skipped if she's already scrolled on.
+      await sleep(1500);
+      if (cancelled || actNow.current !== "hero" || map.isMoving() || !scene.current) return;
+      setPhase("settle");
+      map.easeTo({
+        zoom: reason.place.zoom - 0.75,
+        around: scene.current.pin,
+        duration: 2600,
+        easing: (t) => 1 - Math.pow(1 - t, 3),
+      });
     })();
 
     return () => {
       cancelled = true;
       walk?.stop();
     };
-  }, [els, reduced]);
+  }, [els, reduced, map, reason]);
 
   if (!els) return null;
 
@@ -186,7 +237,7 @@ function TryScene({ map, reply, reduced }: { map: MapboxMap; reply: string; redu
             {at("walk") && <AvatarDot key="dot" pop={!reduced} />}
           </AnimatePresence>
           <AnimatePresence>
-            {at("bubble") && (
+            {at("bubble") && !at("settle") && (
               <div key="bubble" className="absolute bottom-[28px] left-1/2 -translate-x-1/2">
                 <motion.div
                   className="w-max rounded-full bg-paper px-3.5 py-1.5 font-ui text-xs font-semibold tracking-wide text-ink shadow-warm-lg"
@@ -195,7 +246,7 @@ function TryScene({ map, reply, reduced }: { map: MapboxMap; reply: string; redu
                   exit={{ opacity: 0, transition: { duration: 0.5 } }}
                   transition={{ type: "spring", stiffness: 380, damping: 22 }}
                 >
-                  {reply}
+                  {reason.reply}
                 </motion.div>
               </div>
             )}

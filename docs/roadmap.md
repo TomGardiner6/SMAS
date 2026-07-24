@@ -25,6 +25,16 @@ just the delta.
   taps, scroll-safe on mobile, reduced-motion renders pre-landed.
 - **Scene staging is viewport-derived** (`lib/hero-scene.ts`) — fixes the
   scripted hero demo being entirely off-screen on phones.
+- **Chips fly to real venues** (`lib/reasons.ts`): tennis → Centre Court,
+  Wimbledon; study → the British Library; dinner → Padella, Borough
+  Market; French → Colbert, Sloane Square. The camera flight aims the
+  venue under the pin point (`placeOffset`), the pin waits for arrival
+  before dropping, a caption under the chips names the spot, and the
+  scene ends with a slow pull-back around the pin. Scrolling back to the
+  hero returns to your venue.
+- **Hero vocab re-deals per chip** (`components/HeroVocab.tsx`): eyebrow
+  "— London" becomes the venue's neighbourhood; the French chip swaps the
+  whole top vocab into French on a word stagger.
 - **Reduced-motion bug fix**: `Reveal` used to SSR the hidden style and
   then render a plain div on reduced-motion clients; React kept the
   `opacity:0`, hiding Acts II–V. Reveals are now an instant cut instead.
@@ -56,6 +66,11 @@ just the delta.
 - Hero scene positions come from `lib/hero-scene.ts` (viewport unproject
   after `cameraIdle`), not fixed coordinates — don't hard-code lng/lat for
   hero markers.
+- The try-it scene must not stage on `cameraIdle` alone: if a scroll
+  interrupts the flight to a venue, the camera idles at the *wrong act's*
+  waypoint and the pin would drop there. `TryScene` checks the pin point
+  unprojects to within 250m of the venue and otherwise waits for the next
+  `moveend` (the hero's return trip flies back to the venue).
 
 ## Housekeeping (Tom, in Supabase)
 

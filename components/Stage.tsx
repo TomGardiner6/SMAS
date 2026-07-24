@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -14,6 +15,8 @@ import MapStage from "./MapStage";
 import HeroPinDemo from "./HeroPinDemo";
 import WaitlistPins from "./WaitlistPins";
 import { WAYPOINTS } from "@/lib/map-theatre";
+import { placeOffset } from "@/lib/hero-scene";
+import type { Reason } from "@/lib/reasons";
 
 export type Act = "hero" | "how" | "safety" | "interval" | "waitlist";
 
@@ -28,13 +31,13 @@ const ACT_WAYPOINTS: Record<Act, { center: [number, number]; zoom: number; pitch
 const StageContext = createContext<{
   map: MapboxMap | null;
   act: Act;
-  userPinActive: boolean;
-  setUserPinActive: (v: boolean) => void;
+  reason: Reason | null;
+  setReason: (r: Reason) => void;
 }>({
   map: null,
   act: "hero",
-  userPinActive: false,
-  setUserPinActive: () => {},
+  reason: null,
+  setReason: () => {},
 });
 
 export const useStage = () => useContext(StageContext);
@@ -49,10 +52,17 @@ export const useStage = () => useContext(StageContext);
 export default function Stage({ children }: { children: ReactNode }) {
   const [map, setMap] = useState<MapboxMap | null>(null);
   const [act, setAct] = useState<Act>("hero");
-  // once the visitor drops her own pin (TryPinDemo), the scripted hero
-  // loop stands down for good — two casts on one stage would collide
-  const [userPinActive, setUserPinActive] = useState(false);
+  // once the visitor picks a reason (TryPinDemo), her pin owns the hero:
+  // the scripted loop stands down for good, and scrolling back to the top
+  // returns the camera to her venue instead of Soho
+  const [reason, setReason] = useState<Reason | null>(null);
   const actRef = useRef(act);
+  const reasonRef = useRef(reason);
+
+  const pickReason = useCallback((r: Reason) => {
+    reasonRef.current = r;
+    setReason(r);
+  }, []);
 
   useEffect(() => {
     if (!map) return;
@@ -68,10 +78,17 @@ export default function Stage({ children }: { children: ReactNode }) {
           if (!next || next === actRef.current || !(next in ACT_WAYPOINTS)) continue;
           actRef.current = next;
           setAct(next);
-          const wp = ACT_WAYPOINTS[next];
-          // keep the landmark clear of that act's copy card on desktop
-          const offset: [number, number] =
-            next === "interval" && window.innerWidth >= 768 ? [-240, 0] : [0, 0];
+          const picked = next === "hero" ? reasonRef.current : null;
+          const wp = picked
+            ? { center: picked.place.center, zoom: picked.place.zoom, pitch: 40 }
+            : ACT_WAYPOINTS[next];
+          // keep the landmark clear of that act's copy card on desktop;
+          // a picked venue lands back under its pin
+          const offset: [number, number] = picked
+            ? placeOffset(map)
+            : next === "interval" && window.innerWidth >= 768
+              ? [-240, 0]
+              : [0, 0];
           if (reduced) {
             // instant cut (jumpTo's typings lack offset)
             map.easeTo({ center: wp.center, zoom: wp.zoom, pitch: wp.pitch, offset, duration: 0 });
@@ -95,12 +112,12 @@ export default function Stage({ children }: { children: ReactNode }) {
   }, [map]);
 
   return (
-    <StageContext.Provider value={{ map, act, userPinActive, setUserPinActive }}>
+    <StageContext.Provider value={{ map, act, reason, setReason: pickReason }}>
       <div className="fixed inset-0 z-0" aria-hidden="true">
         <MapStage className="absolute inset-0" onReady={setMap} />
         {/* per-act scenes mount only while their act plays, so markers never
             photobomb the next scene; each replays on scrolling back */}
-        {map && act === "hero" && !userPinActive ? <HeroPinDemo map={map} /> : null}
+        {map && act === "hero" && !reason ? <HeroPinDemo map={map} /> : null}
         {map && act === "waitlist" ? <WaitlistPins map={map} /> : null}
         {/* Act III settles on the South Bank at dusk: a warm tint, not a style swap (§4) */}
         <motion.div

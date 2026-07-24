@@ -76,6 +76,21 @@ grey box.
   walk positions are unprojected from screen coordinates, because fixed
   Soho lng/lat put the whole cast off the right edge on phones. Staging
   waits for the camera to be idle first.
+- **Chips fly to real venues** (`lib/reasons.ts`): each reason has a real
+  London spot — Centre Court for tennis, the British Library for study,
+  Padella at Borough Market for dinner, Colbert on Sloane Square for
+  French. The flight aims the venue at the exact viewport point the pin
+  drops on (`placeOffset`), and the scene holds its curtain until the
+  camera has actually arrived there — if scrolling interrupts the flight,
+  the pin waits for the hero's next return trip rather than dropping at
+  the wrong venue. The sequence ends with a slow zoom-out around the pin,
+  and scrolling back to the hero returns to *your* venue, not Soho.
+- **The hero vocab re-deals per chip** (`components/HeroVocab.tsx`): the
+  eyebrow's "— London" becomes the venue's neighbourhood, and the French
+  chip swaps the eyebrow and headline into French ("Posé un lapin ?"),
+  word by word on a stagger. The mount-time line renders static so server
+  and client markup stay identical (the same SSR-parity rule that bit
+  `Reveal` under reduced motion); reduced motion swaps instantly.
 - **Waitlist name column**: if the deployed code sends `name` before the
   column exists in Supabase, the form retries the insert without it
   (PGRST204), so a schema/deploy ordering mistake can't break signups.

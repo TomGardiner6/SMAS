@@ -7,20 +7,35 @@ export type HeroScene = {
 };
 
 /**
+ * Where the hero pin sits in the viewport. The mobile hero is text-dense;
+ * the only clear map is the strip above the eyebrow. Keep the whole cast —
+ * pin, avatar, and the bubble that pops above it — high enough that the
+ * bubble clears the eyebrow line, and the pin far enough down that its top
+ * isn't clipped. Desktop: clear of the copy on the left third.
+ */
+export function pinPoint(w: number, h: number): [number, number] {
+  return w < 768 ? [w * 0.64, h * 0.085] : [w * 0.7, h * 0.42];
+}
+
+/**
+ * flyTo offset that lands a target lng/lat exactly under the pin point, so
+ * a chip's venue sits beneath the pin that's about to drop on it.
+ */
+export function placeOffset(map: MapboxMap): [number, number] {
+  const { clientWidth: w, clientHeight: h } = map.getContainer();
+  const [x, y] = pinPoint(w, h);
+  return [x - w / 2, y - h / 2];
+}
+
+/**
  * Stage positions for the hero pin-drop, derived from the viewport so the
  * scene always plays on-screen. Fixed Soho coordinates put the whole cast
- * off the right edge on phones. Desktop: clear of the copy on the left
- * third (matches the original Soho Square staging). Mobile: in the open
- * map above the headline, with the walk scaled down to fit.
+ * off the right edge on phones. Call only once the camera is idle.
  */
 export function heroScene(map: MapboxMap): HeroScene {
   const { clientWidth: w, clientHeight: h } = map.getContainer();
   const mobile = w < 768;
-  // The mobile hero is text-dense; the only clear map is the strip above
-  // the eyebrow. Keep the whole cast — pin, avatar, and the bubble that
-  // pops above it — high enough that the bubble clears the eyebrow line,
-  // and the pin far enough down that its top isn't clipped by the viewport.
-  const pin: [number, number] = mobile ? [w * 0.64, h * 0.085] : [w * 0.7, h * 0.42];
+  const pin = pinPoint(w, h);
   const startOff = mobile ? [-108, 8] : [-150, 138];
   const endOff = mobile ? [42, 34] : [49, 37];
   const to = ([x, y]: [number, number]): [number, number] => {
