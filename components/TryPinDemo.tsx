@@ -32,7 +32,7 @@ const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
  * on mobile; under reduced motion the scene renders pre-landed.
  */
 export default function TryPinDemo() {
-  const { map, act, setUserPinActive } = useStage();
+  const { map, setUserPinActive } = useStage();
   const reduced = useReducedMotion();
   const [reason, setReason] = useState<Reason | null>(null);
 
@@ -71,7 +71,12 @@ export default function TryPinDemo() {
           “{reason.reply}”.
         </p>
       )}
-      {map && act === "hero" && reason ? (
+      {/* Not gated on the active act: the act flips to "how" once you've
+          scrolled even half a screen, which made the chips go dead right
+          when they were comfortably reachable. The scene stages itself
+          from the current viewport, so the pin drops wherever the camera
+          is — and flies off-stage naturally when the camera travels on. */}
+      {map && reason ? (
         <TryScene key={reason.id} map={map} reply={reason.reply} reduced={!!reduced} />
       ) : null}
     </div>
