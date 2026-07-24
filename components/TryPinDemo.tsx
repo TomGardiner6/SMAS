@@ -134,17 +134,20 @@ function TryScene({ map, reply, reduced }: { map: MapboxMap; reply: string; redu
     let walk: ReturnType<typeof animate> | undefined;
 
     (async () => {
+      // Snappier than the passive hero loop: you tapped and you're
+      // watching, so the reply lands at ~2.4s, the glow at ~3.2s. The drop
+      // itself keeps its weight — that's the signature moment (§3.3).
       await sleep(650); // spring drop lands
       if (cancelled) return;
       setPhase("ripple");
-      await sleep(850);
+      await sleep(400);
       if (cancelled) return;
       const { avatarStart, avatarEnd } = scene.current ?? {};
       if (!avatarStart || !avatarEnd) return;
       avatarMarker.current?.setLngLat(avatarStart);
       setPhase("walk");
       walk = animate(0, 1, {
-        duration: 1.9,
+        duration: 1.3,
         ease: PIN_EASE,
         onUpdate: (t) =>
           avatarMarker.current?.setLngLat([
@@ -152,10 +155,10 @@ function TryScene({ map, reply, reduced }: { map: MapboxMap; reply: string; redu
             avatarStart[1] + (avatarEnd[1] - avatarStart[1]) * t,
           ]),
       });
-      await sleep(2100);
+      await sleep(1350);
       if (cancelled) return;
       setPhase("bubble");
-      await sleep(1100);
+      await sleep(800);
       if (cancelled) return;
       setPhase("saved");
     })();
