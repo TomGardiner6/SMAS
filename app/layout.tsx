@@ -22,6 +22,11 @@ const archivo = Archivo({
 });
 
 export const metadata: Metadata = {
+  // Resolves the OG/Twitter image to an absolute URL so the link-preview
+  // card renders when shared. Without this, Next falls back to
+  // http://localhost:3000 and the card image is dead. Update if the site
+  // ever moves to a custom domain.
+  metadataBase: new URL("https://smas-pi.vercel.app"),
   title: "Save Me A Seat — London",
   description:
     "Stood up? Spare ticket? Drop a pin and a verified woman nearby will take that seat. Women-only, London-first. Join the waitlist.",

@@ -26,13 +26,13 @@ export default function Home() {
           <div className="relative mx-auto w-full max-w-6xl px-6 md:px-10">
             <div className="max-w-2xl py-24">
               <HeroVocab />
-              <p className="mt-7 max-w-md text-lg md:text-xl">
+              <p className="mt-5 max-w-md text-lg md:mt-7 md:text-xl">
                 Drop a pin wherever you are (a pub, a foyer, the good seats) and
                 a verified woman nearby will come and join you.
               </p>
               <a
                 href="#waitlist"
-                className="mt-10 inline-block rounded-full bg-velvet px-8 py-4 font-ui text-sm font-semibold uppercase tracking-[0.08em] text-paper shadow-warm transition duration-150 hover:shadow-warm-lg active:scale-[0.97]"
+                className="mt-7 inline-block rounded-full bg-velvet px-8 py-4 font-ui text-sm font-semibold uppercase tracking-[0.08em] text-paper shadow-warm transition duration-150 hover:shadow-warm-lg active:scale-[0.97] md:mt-10"
               >
                 Join the waitlist
               </a>

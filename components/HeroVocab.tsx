@@ -36,7 +36,7 @@ export default function HeroVocab() {
       <p className="eyebrow text-velvet">
         <SwapWords swapKey={`${lang}-${area}`} text={`${v.seat} — ${area}`} lang={frAttr} />
       </p>
-      <h1 className="display mt-5 text-[clamp(2.75rem,7vw,5.5rem)]">
+      <h1 className="display mt-4 text-[clamp(2.4rem,7vw,5.5rem)] md:mt-5">
         <SwapWords swapKey={lang} text={v.headline} lang={frAttr} />
       </h1>
     </>

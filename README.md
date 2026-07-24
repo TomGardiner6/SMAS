@@ -91,6 +91,20 @@ grey box.
   word by word on a stagger. The mount-time line renders static so server
   and client markup stay identical (the same SSR-parity rule that bit
   `Reveal` under reduced motion); reduced motion swaps instantly.
+- **Share-card image needs `metadataBase`** (`app/layout.tsx`): the OG and
+  Twitter images are given as `/og.png`, a root-relative path. Next only
+  turns that into an absolute URL if `metadataBase` is set — otherwise it
+  falls back to `http://localhost:3000/og.png`, which is dead everywhere
+  the link is actually shared. It's pinned to the Vercel domain; update it
+  if the site moves to a custom domain.
+- **Mobile reply lands under the thumb** (`TryPinDemo`): on a phone the
+  pin drops in the strip above the headline, but your eyes are on the
+  chips at the bottom — so the caption beneath the chips swaps from the
+  venue name to her reply exactly when the bubble pops up top. It's a
+  single line that swaps content (never a second line) so it can't push
+  itself below the fold. The hero's mobile spacing and smallest-breakpoint
+  headline size were trimmed so that caption clears the fold while the pin
+  scene still clears the eyebrow.
 - **Waitlist name column**: if the deployed code sends `name` before the
   column exists in Supabase, the form retries the insert without it
   (PGRST204), so a schema/deploy ordering mistake can't break signups.

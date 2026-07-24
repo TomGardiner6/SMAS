@@ -25,6 +25,11 @@ const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 export default function TryPinDemo() {
   const { map, reason, setReason } = useStage();
   const reduced = useReducedMotion();
+  // On mobile the pin drops in the strip above the headline while your
+  // thumb and eyes are on the chips at the bottom — so the caption below
+  // the chips carries the payoff, swapping from the venue name to her
+  // reply the moment the bubble pops up on the map.
+  const [replyLanded, setReplyLanded] = useState(false);
 
   const fly = (r: Reason) => {
     if (!map) return;
@@ -44,7 +49,7 @@ export default function TryPinDemo() {
   };
 
   return (
-    <div className="mt-10 max-w-md">
+    <div className="mt-6 max-w-md md:mt-10">
       <p className="font-ui text-xs font-semibold uppercase tracking-[0.08em] text-ink/70">
         Try it — who do you need tonight?
       </p>
@@ -57,6 +62,7 @@ export default function TryPinDemo() {
               type="button"
               aria-pressed={selected}
               onClick={() => {
+                setReplyLanded(false);
                 setReason(r);
                 fly(r);
               }}
@@ -71,22 +77,34 @@ export default function TryPinDemo() {
           );
         })}
       </div>
-      {/* the map layer is aria-hidden, so name the venue and narrate here */}
+      {/* the map layer is aria-hidden, so name the venue and (when the
+          bubble lands up top) her reply here, under the thumb. One line
+          that swaps content, so it never adds height below the fold. */}
       {reason && (
-        <motion.p
-          key={`caption-${reason.id}`}
+        <p
           role="status"
-          className="mt-3 font-ui text-xs text-ink/70"
-          initial={reduced ? false : { opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: PIN_EASE, delay: 0.15 }}
+          aria-live="polite"
+          className="mt-3 min-h-[1.1rem] font-ui text-xs text-ink/70"
         >
-          Your pin&rsquo;s at {reason.place.name}.
-          <span className="sr-only">
-            {" "}
-            A verified woman nearby replies: &ldquo;{reason.reply}&rdquo;.
-          </span>
-        </motion.p>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={replyLanded ? `reply-${reason.id}` : `venue-${reason.id}`}
+              className="inline-block"
+              initial={reduced ? false : { opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduced ? { opacity: 0 } : { opacity: 0, y: -6 }}
+              transition={{ duration: reduced ? 0 : 0.32, ease: PIN_EASE }}
+            >
+              {replyLanded ? (
+                <span className="font-semibold text-ink">
+                  Someone nearby: &ldquo;{reason.reply}&rdquo;
+                </span>
+              ) : (
+                <>Your pin&rsquo;s at {reason.place.name}.</>
+              )}
+            </motion.span>
+          </AnimatePresence>
+        </p>
       )}
       {/* Not gated on the active act: the act flips to "how" once you've
           scrolled even half a screen, which made the chips go dead right
@@ -94,7 +112,13 @@ export default function TryPinDemo() {
           camera to reach its venue before dropping the pin — even if that
           arrival is a later scroll back up to the hero. */}
       {map && reason ? (
-        <TryScene key={reason.id} map={map} reason={reason} reduced={!!reduced} />
+        <TryScene
+          key={reason.id}
+          map={map}
+          reason={reason}
+          reduced={!!reduced}
+          onReplyLanded={() => setReplyLanded(true)}
+        />
       ) : null}
     </div>
   );
@@ -103,7 +127,17 @@ export default function TryPinDemo() {
 /** One run of the fly → drop → ripple → walk → reply → saved → pull-back
  * sequence. Keyed by reason, so picking another chip strikes the set and
  * replays fresh at the new venue. */
-function TryScene({ map, reason, reduced }: { map: MapboxMap; reason: Reason; reduced: boolean }) {
+function TryScene({
+  map,
+  reason,
+  reduced,
+  onReplyLanded,
+}: {
+  map: MapboxMap;
+  reason: Reason;
+  reduced: boolean;
+  onReplyLanded: () => void;
+}) {
   const { act } = useStage();
   const [els, setEls] = useState<{ pin: HTMLDivElement; avatar: HTMLDivElement } | null>(null);
   const avatarMarker = useRef<Marker | null>(null);
@@ -111,6 +145,9 @@ function TryScene({ map, reason, reduced }: { map: MapboxMap; reason: Reason; re
   const [phase, setPhase] = useState<Phase>("drop");
   const actNow = useRef(act);
   actNow.current = act;
+  // read the latest callback without it re-triggering the scene effect
+  const onReplyRef = useRef(onReplyLanded);
+  onReplyRef.current = onReplyLanded;
   // visuals derive from `reduced` at render — no setState needed to pre-land
   const shown: Phase = reduced ? "saved" : phase;
   const at = (p: Phase) => PHASES.indexOf(shown) >= PHASES.indexOf(p);
@@ -165,6 +202,7 @@ function TryScene({ map, reason, reduced }: { map: MapboxMap; reason: Reason; re
     if (reduced) {
       // pre-landed scene; visuals derive from `reduced` at render
       if (scene.current) avatarMarker.current?.setLngLat(scene.current.avatarEnd);
+      onReplyRef.current();
       return;
     }
 
@@ -196,6 +234,7 @@ function TryScene({ map, reason, reduced }: { map: MapboxMap; reason: Reason; re
       await sleep(1350);
       if (cancelled) return;
       setPhase("bubble");
+      onReplyRef.current(); // her reply also lands in the caption, under the thumb
       await sleep(800);
       if (cancelled) return;
       setPhase("saved");
