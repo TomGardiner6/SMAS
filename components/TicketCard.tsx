@@ -6,7 +6,7 @@
 export default function TicketCard() {
   return (
     <div
-      className="mt-8 flex overflow-hidden rounded-xl bg-paper shadow-warm-lg"
+      className="mt-6 flex overflow-hidden rounded-xl bg-paper shadow-warm-lg md:mt-8"
       style={{
         // punch the tear-line notches out of the card; browsers without
         // mask-composite simply show square corners there
@@ -18,7 +18,7 @@ export default function TicketCard() {
         WebkitMaskComposite: "source-in",
       }}
     >
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-5 md:p-6">
         <p className="font-ui text-[11px] font-semibold uppercase tracking-[0.14em] text-velvet">
           Spare ticket · Tonight
         </p>

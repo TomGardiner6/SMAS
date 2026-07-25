@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import type { Map as MapboxMap } from "mapbox-gl";
 import MapStage from "./MapStage";
 import HeroPinDemo from "./HeroPinDemo";
+import IntervalPin from "./IntervalPin";
 import WaitlistPins from "./WaitlistPins";
 import { WAYPOINTS } from "@/lib/map-theatre";
 import { placeOffset } from "@/lib/hero-scene";
@@ -82,13 +83,19 @@ export default function Stage({ children }: { children: ReactNode }) {
           const wp = picked
             ? { center: picked.place.center, zoom: picked.place.zoom, pitch: 40 }
             : ACT_WAYPOINTS[next];
-          // keep the landmark clear of that act's copy card on desktop;
-          // a picked venue lands back under its pin
+          // keep the landmark clear of that act's copy card: beside it on
+          // desktop, above it on mobile where the card runs full-width.
+          // A picked venue lands back under its own pin instead.
+          const mobile = window.innerWidth < 768;
           const offset: [number, number] = picked
             ? placeOffset(map)
-            : next === "interval" && window.innerWidth >= 768
-              ? [-240, 0]
-              : [0, 0];
+            : next === "interval"
+              ? mobile
+                ? [0, -Math.round(window.innerHeight * 0.36)]
+                : [-240, 0]
+              : next === "how" && mobile
+                ? [0, -Math.round(window.innerHeight * 0.37)]
+                : [0, 0];
           if (reduced) {
             // instant cut (jumpTo's typings lack offset)
             map.easeTo({ center: wp.center, zoom: wp.zoom, pitch: wp.pitch, offset, duration: 0 });
@@ -118,6 +125,7 @@ export default function Stage({ children }: { children: ReactNode }) {
         {/* per-act scenes mount only while their act plays, so markers never
             photobomb the next scene; each replays on scrolling back */}
         {map && act === "hero" && !reason ? <HeroPinDemo map={map} /> : null}
+        {map && act === "interval" ? <IntervalPin map={map} /> : null}
         {map && act === "waitlist" ? <WaitlistPins map={map} /> : null}
         {/* Act III settles on the South Bank at dusk: a warm tint, not a style swap (§4) */}
         <motion.div

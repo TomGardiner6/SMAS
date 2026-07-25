@@ -44,7 +44,9 @@ export default function Home() {
         {/* Act II — how it works. Map glides east to Covent Garden; each
             step syncs a map event; tap-through on mobile. */}
         <section data-act="how" className="relative">
-          <div className="mx-auto max-w-6xl px-6 py-32 md:px-10">
+          {/* same headroom trick as Act IV: on mobile the cards run
+              full-width, so the vibe pins need a strip of their own */}
+          <div className="mx-auto max-w-6xl px-6 pb-32 pt-64 md:px-10 md:py-32">
             <ActTwo />
           </div>
         </section>
@@ -53,7 +55,7 @@ export default function Home() {
         <section data-act="safety" className="relative">
           <div className="mx-auto max-w-6xl px-6 py-40 md:px-10">
             <Reveal className="max-w-xl">
-              <div className="rounded-2xl bg-paper/95 p-8 shadow-warm-lg md:p-12">
+              <div className="rounded-2xl bg-paper p-8 shadow-warm-lg md:p-12">
                 <p className="eyebrow text-velvet">Act III — The safety layer</p>
                 <h2 className="display mt-4 text-4xl md:text-6xl">
                   Built so your gut can relax.
@@ -92,14 +94,17 @@ export default function Home() {
 
         {/* Act IV — the interval bar: spare tickets. Royal Albert Hall. */}
         <section data-act="interval" className="relative">
-          <div className="mx-auto max-w-6xl px-6 py-32 md:px-10">
+          {/* extra headroom on mobile, where the card runs full-width: it
+              opens a strip of map above so the Albert Hall and its velvet
+              pin arrive before the card that explains them */}
+          <div className="mx-auto max-w-6xl px-6 pb-32 pt-64 md:px-10 md:py-32">
             <Reveal className="ml-auto max-w-md">
-              <div className="rounded-2xl bg-paper/95 p-8 shadow-warm-lg md:p-10">
+              <div className="rounded-2xl bg-paper p-6 shadow-warm-lg md:p-10">
                 <p className="eyebrow text-velvet">Act IV — The interval bar</p>
-                <h2 className="display mt-4 text-4xl md:text-5xl">
+                <h2 className="display mt-4 text-[2rem] md:text-5xl">
                   Her plus-one cancelled. Your favourite band. Everyone wins.
                 </h2>
-                <p className="mt-5">
+                <p className="mt-4 md:mt-5">
                   A spare ticket is a velvet pin: drop it, and the seat beside
                   you goes to someone who actually wanted to be there.
                 </p>
