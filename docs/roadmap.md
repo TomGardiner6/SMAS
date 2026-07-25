@@ -39,6 +39,14 @@ just the delta.
   then render a plain div on reduced-motion clients; React kept the
   `opacity:0`, hiding Acts II–V. Reveals are now an instant cut instead.
 
+- **Laptop + phone audit pass** (2026-07-25). Walked all five acts at
+  1440x900, 1280x720, iPhone 13 and iPhone SE. Fixed: the try-it chips
+  falling below the fold on any viewport under ~830px tall; map labels
+  ghosting through the `bg-paper/95` cards on mobile; Acts III and IV
+  having nothing on the map at all (Act IV now pins the Royal Albert
+  Hall); Act II's vibe pins hiding behind the cards on mobile; and the
+  waitlist scatter sitting almost entirely behind the waitlist card.
+
 ## Ideas remaining (optional, prioritised)
 
 - **Tap-the-map pin placement** — the "more magical" upgrade to the chip

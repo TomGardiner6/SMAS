@@ -105,6 +105,30 @@ grey box.
   itself below the fold. The hero's mobile spacing and smallest-breakpoint
   headline size were trimmed so that caption clears the fold while the pin
   scene still clears the eyebrow.
+- **The hero has to fit a laptop, not just a monitor** (`short-laptop`
+  variant in `globals.css`): a 13" MacBook gives ~700–800px of viewport,
+  which put the try-it chips below the fold — the best thing on the page,
+  invisible to most desktop visitors. The variant tightens the hero's
+  vertical rhythm under 850px tall, and the headline clamps on `min(7vw,
+  9.5vh)` so height constrains it too. Phones sit on the clamp's floor and
+  tall desktops on its cap, so neither changes.
+- **Cards are opaque, not `bg-paper/95`**: at phone size a card fills the
+  screen over dense map labels, and 5% translucency was enough to read
+  "SOUTH BANK" through the safety copy. Don't reintroduce the alpha.
+- **Every act should put something on the map.** Act IV's card says "a
+  spare ticket is a velvet pin: drop it", so `IntervalPin` puts one on the
+  Royal Albert Hall — otherwise the copy claims something the spine
+  refuses to show. Act III is the deliberate exception: the dusk tint is
+  its motif and the brief says to give it room.
+- **Mobile acts need a strip of map.** Acts II and IV run their cards
+  full-width on phones, so each takes extra top padding there and aims its
+  camera above the card (`Stage`'s per-act offsets). Act II's vibe pins
+  also lay out along one line of latitude on mobile — the desktop triangle
+  is too deep and hides two of the three.
+- **Waitlist pins ring the card on purpose** (`WaitlistPins`): at zoom
+  11.5 the card covers almost exactly the central-London box, so 14 of the
+  original 16 pins were behind it and the city read as empty. The outer
+  ring is positioned to land in the bands either side.
 - **Waitlist name column**: if the deployed code sends `name` before the
   column exists in Supabase, the form retries the insert without it
   (PGRST204), so a schema/deploy ordering mistake can't break signups.
