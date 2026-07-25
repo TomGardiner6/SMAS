@@ -1,4 +1,4 @@
-// The four "who do you need tonight?" reasons, each anchored to a real
+// The four "who's the seat for?" reasons, each anchored to a real
 // London spot the camera flies to when its chip is tapped. `area` feeds the
 // hero eyebrow ("Save me a seat — Wimbledon"); `name` is the caption under
 // the chips ("Your pin's at Centre Court, Wimbledon."). The French chip

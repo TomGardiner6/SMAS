@@ -15,7 +15,7 @@ type Phase = (typeof PHASES)[number];
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 /**
- * The hero demo you do yourself: pick who you need tonight and the camera
+ * The hero demo you do yourself: say who the seat is for and the camera
  * flies to a real venue for it — Centre Court for tennis, Colbert for
  * French — where your pin drops, a woman walks over, and her reply answers
  * the reason you chose. The scene ends with a slow pull-back that reveals
@@ -51,7 +51,7 @@ export default function TryPinDemo() {
   return (
     <div className="mt-6 max-w-md md:mt-10 short-laptop:mt-7">
       <p className="font-ui text-xs font-semibold uppercase tracking-[0.08em] text-ink/70">
-        Try it — who do you need tonight?
+        Try it — who&rsquo;s the seat for?
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         {REASONS.map((r) => {

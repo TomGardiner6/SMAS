@@ -137,7 +137,7 @@ export default function WaitlistForm() {
       </div>
 
       <label htmlFor="waitlist-postcode" className="mt-5 block font-ui text-xs font-semibold uppercase tracking-[0.08em] text-ink/70">
-        Postcode area <span className="normal-case tracking-normal text-ink/65">(optional — helps us pick first neighbourhoods)</span>
+        Postcode area <span className="normal-case tracking-normal text-ink/65">(optional — helps us choose the first neighbourhoods)</span>
       </label>
       <div className="relative mt-1">
         <input

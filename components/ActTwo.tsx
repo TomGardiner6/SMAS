@@ -42,7 +42,7 @@ const AVATAR_END_MOBILE: [number, number] = [-0.1203, 51.5114];
 const STEPS = [
   {
     title: "Drop a pin",
-    body: "Public places only. Pick your vibe so she knows what she's walking into:",
+    body: "Public places only. Pick your vibe so she knows what she’s saying yes to:",
     vibes: true,
   },
   {

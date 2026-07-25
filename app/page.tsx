@@ -126,7 +126,7 @@ export default function Home() {
                 <p className="eyebrow text-velvet">Act V — Take your seat</p>
                 <h2 className="display mt-4 text-5xl md:text-6xl">Save your seat.</h2>
                 <p className="mt-5">
-                  We&rsquo;re opening in London first. Leave your details and
+                  We&rsquo;re starting in London. Leave your details and
                   you&rsquo;ll be first through the doors.
                 </p>
                 <WaitlistForm />

@@ -17,7 +17,7 @@ just the delta.
   do in Supabase: re-run `supabase/schema.sql` in the SQL editor** (the
   whole file is idempotent) so names actually get stored.
 - **Interactive demo + reasons showcase, merged**: the hero now asks
-  "Try it — who do you need tonight?" with four chips (tennis partner,
+  "Try it — who's the seat for?" with four chips (tennis partner,
   study buddy, new face for dinner, native French speaker). The chips
   double as the use-case showcase; tapping one drops the pin and the
   reply answers the reason ("Save me a seat 🍷 4 min"). This is the

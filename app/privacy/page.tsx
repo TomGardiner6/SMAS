@@ -31,7 +31,7 @@ export default function Privacy() {
           >
             mayasexton1@gmail.com
           </a>{" "}
-          and we&rsquo;ll delete you promptly, no questions.
+          and we&rsquo;ll delete your details promptly, no questions.
         </p>
       </div>
       <p className="mt-12">
