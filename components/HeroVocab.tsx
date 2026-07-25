@@ -36,7 +36,11 @@ export default function HeroVocab() {
       <p className="eyebrow text-velvet">
         <SwapWords swapKey={`${lang}-${area}`} text={`${v.seat} — ${area}`} lang={frAttr} />
       </p>
-      <h1 className="display mt-4 text-[clamp(2.4rem,7vw,5.5rem)] md:mt-5">
+      {/* the 10vh term only bites on short laptops, where four lines of
+          display type at full size pushed the try-it chips off-screen;
+          phones sit on the 2.4rem floor and tall screens on the 5.5rem cap,
+          so both are unchanged */}
+      <h1 className="display mt-4 text-[clamp(2.4rem,min(7vw,9.5vh),5.5rem)] md:mt-5">
         <SwapWords swapKey={lang} text={v.headline} lang={frAttr} />
       </h1>
     </>

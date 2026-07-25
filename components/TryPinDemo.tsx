@@ -49,7 +49,7 @@ export default function TryPinDemo() {
   };
 
   return (
-    <div className="mt-6 max-w-md md:mt-10">
+    <div className="mt-6 max-w-md md:mt-10 short-laptop:mt-7">
       <p className="font-ui text-xs font-semibold uppercase tracking-[0.08em] text-ink/70">
         Try it — who do you need tonight?
       </p>

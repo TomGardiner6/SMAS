@@ -27,6 +27,16 @@
   --shadow-warm-lg: 0 8px 32px rgb(46 33 40 / 0.14);
 }
 
+/* Laptops: wide enough for the desktop hero, but too short to fit its full
+   vertical rhythm — a 13" MacBook gives ~700–800px of viewport, which put
+   the try-it chips below the fold entirely. Tightens the hero only; phones
+   (narrow) and tall desktops are untouched. */
+@custom-variant short-laptop {
+  @media (min-width: 768px) and (max-height: 850px) {
+    @slot;
+  }
+}
+
 body {
   background: var(--paper);
   color: var(--ink);
